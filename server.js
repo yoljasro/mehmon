@@ -24,8 +24,8 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: '/',
-        description: 'Current environment'
+        url: 'https://mehmon.mainstream.ceo',
+        description: 'Production server (HTTPS)'
       },
       {
         url: `http://localhost:${process.env.PORT || 5000}`,
