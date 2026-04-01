@@ -2,8 +2,14 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-// Generate Token
-const generateToken = (id) => {
+// Generate Tokens
+const generateAccessToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: '15m',
+  });
+};
+
+const generateRefreshToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d',
   });
@@ -30,10 +36,14 @@ exports.registerUser = async (req, res) => {
 
     if (user) {
       res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        token: generateToken(user._id),
+        accessToken: generateAccessToken(user._id),
+        refreshToken: generateRefreshToken(user._id),
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
       });
     } else {
       res.status(400).json({ message: 'Invalid user data' });
@@ -54,10 +64,14 @@ exports.loginUser = async (req, res) => {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        token: generateToken(user._id),
+        accessToken: generateAccessToken(user._id),
+        refreshToken: generateRefreshToken(user._id),
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
       });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
