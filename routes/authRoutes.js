@@ -35,19 +35,25 @@ const router = express.Router();
  *               properties:
  *                 accessToken:
  *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *                 refreshToken:
  *                   type: string
+ *                   example: "def456cd-7890-4abc-defg-hijklmn12345"
  *                 user:
  *                   type: object
  *                   properties:
  *                     _id:
  *                       type: string
+ *                       example: "65f1a2b3c4d5e6f7a8b9c0d1"
  *                     name:
  *                       type: string
+ *                       example: "Jasur Saidaliyev"
  *                     email:
  *                       type: string
+ *                       example: "jasur@example.com"
  *                     role:
  *                       type: string
+ *                       example: "admin"
  *       400:
  *         description: Bad request
  */
@@ -83,19 +89,25 @@ router.post('/register', registerUser);
  *               properties:
  *                 accessToken:
  *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *                 refreshToken:
  *                   type: string
+ *                   example: "def456cd-7890-4abc-defg-hijklmn12345"
  *                 user:
  *                   type: object
  *                   properties:
  *                     _id:
  *                       type: string
+ *                       example: "65f1a2b3c4d5e6f7a8b9c0d1"
  *                     name:
  *                       type: string
+ *                       example: "Jasur Saidaliyev"
  *                     email:
  *                       type: string
+ *                       example: "jasur@example.com"
  *                     role:
  *                       type: string
+ *                       example: "admin"
  *       401:
  *         description: Unauthorized
  */

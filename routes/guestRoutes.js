@@ -39,12 +39,16 @@ router.use(protect);
  *             properties:
  *               name:
  *                 type: string
+ *                 example: "John Doe"
  *               phone:
  *                 type: string
+ *                 example: "+998901234567"
  *               email:
  *                 type: string
+ *                 example: "john@example.com"
  *               notes:
  *                 type: string
+ *                 example: "Regular customer"
  *     responses:
  *       201:
  *         description: Guest created
@@ -88,12 +92,16 @@ router.route('/').get(getGuests).post(createGuest);
  *             properties:
  *               name:
  *                 type: string
+ *                 example: "John Doe"
  *               phone:
  *                 type: string
+ *                 example: "+998901234567"
  *               email:
  *                 type: string
+ *                 example: "john@example.com"
  *               notes:
  *                 type: string
+ *                 example: "Regular customer"
  *     responses:
  *       200:
  *         description: Guest updated

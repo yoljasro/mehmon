@@ -42,18 +42,25 @@ router.use(protect);
  *             properties:
  *               guestName:
  *                 type: string
+ *                 example: "John Doe"
  *               phone:
  *                 type: string
+ *                 example: "+998901234567"
  *               tableId:
  *                 type: string
+ *                 example: "65f1a2b3c4d5e6f7a8b9c0d1"
  *               date:
  *                 type: string
+ *                 example: "2026-05-01"
  *               timeSlot:
  *                 type: string
+ *                 example: "18:30"
  *               numberOfGuests:
  *                 type: number
+ *                 example: 2
  *               notes:
  *                 type: string
+ *                 example: "Anniversary dinner"
  *     responses:
  *       201:
  *         description: Booking created
@@ -83,21 +90,29 @@ router.route('/').get(getBookings).post(createBooking);
  *             properties:
  *               guestName:
  *                 type: string
+ *                 example: "John Doe"
  *               phone:
  *                 type: string
+ *                 example: "+998901234567"
  *               tableId:
  *                 type: string
+ *                 example: "65f1a2b3c4d5e6f7a8b9c0d1"
  *               date:
  *                 type: string
+ *                 example: "2026-05-01"
  *               timeSlot:
  *                 type: string
+ *                 example: "18:30"
  *               numberOfGuests:
  *                 type: number
+ *                 example: 2
  *               notes:
  *                 type: string
+ *                 example: "Anniversary dinner"
  *               status:
  *                 type: string
  *                 enum: [pending, confirmed, cancelled, completed]
+ *                 example: "confirmed"
  *     responses:
  *       200:
  *         description: Booking updated

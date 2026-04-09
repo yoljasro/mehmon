@@ -38,10 +38,13 @@ router.use(protect); // All table routes are protected
  *             properties:
  *               number:
  *                 type: string
+ *                 example: "T-01"
  *               capacity:
  *                 type: number
+ *                 example: 4
  *               location:
  *                 type: string
+ *                 example: "Main Hall"
  *     responses:
  *       201:
  *         description: Table created
@@ -71,10 +74,13 @@ router.route('/').get(getTables).post(createTable);
  *             properties:
  *               number:
  *                 type: string
+ *                 example: "T-01"
  *               capacity:
  *                 type: number
+ *                 example: 4
  *               location:
  *                 type: string
+ *                 example: "Main Hall"
  *     responses:
  *       200:
  *         description: Table updated
