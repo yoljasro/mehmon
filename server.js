@@ -24,7 +24,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'https://mehmon.mainstream.ceo',
+        url: 'https://mainstream.ceo',
         description: 'Production server (HTTPS)'
       },
       {

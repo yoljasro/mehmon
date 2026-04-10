@@ -13,13 +13,13 @@ async function testAPI() {
       email: `test_${Date.now()}@example.com`,
       password: 'password123'
     });
-    const token = registerRes.data.token;
+    const token = registerRes.data.accessToken;
     console.log('✓ Registration Successful');
 
     // 2. Login User
     console.log('2. Testing Login...');
     const loginRes = await axios.post(`${API_URL}/auth/login`, {
-      email: registerRes.data.email,
+      email: registerRes.data.user.email,
       password: 'password123'
     });
     console.log('✓ Login Successful');
