@@ -49,6 +49,9 @@ router.use(protect);
  *               notes:
  *                 type: string
  *                 example: "Regular customer"
+ *               avatarUrl:
+ *                 type: string
+ *                 example: "https://example.com/avatar.jpg"
  *     responses:
  *       201:
  *         description: Guest created

@@ -162,6 +162,8 @@ router.post('/login', loginUser);
  *                 type: string
  *               name:
  *                 type: string
+ *               phone:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Profile updated successfully
