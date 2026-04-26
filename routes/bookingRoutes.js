@@ -55,6 +55,12 @@ router.use(protect);
  *               timeSlot:
  *                 type: string
  *                 example: "18:30"
+ *               endTime:
+ *                 type: string
+ *                 example: "20:30"
+ *               bookingType:
+ *                 type: string
+ *                 example: "Banket"
  *               numberOfGuests:
  *                 type: number
  *                 example: 2
@@ -103,9 +109,14 @@ router.route('/').get(getBookings).post(createBooking);
  *               timeSlot:
  *                 type: string
  *                 example: "18:30"
+ *               endTime:
+ *                 type: string
+ *                 example: "20:30"
+ *               bookingType:
+ *                 type: string
+ *                 example: "Banket"
  *               numberOfGuests:
  *                 type: number
- *                 example: 2
  *               notes:
  *                 type: string
  *                 example: "Anniversary dinner"

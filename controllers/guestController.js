@@ -5,8 +5,23 @@ const Guest = require('../models/Guest');
 // @access  Private
 exports.getGuests = async (req, res) => {
   try {
-    const guests = await Guest.find();
-    res.json(guests);
+    const guests = await Guest.find().sort({ lastVisit: -1 });
+    
+    // Add derived fields for frontend cards
+    const processedGuests = guests.map(guest => {
+      const g = guest.toObject();
+      if (g.visits && g.visits.length > 0) {
+        const last = g.visits[g.visits.length - 1];
+        g.lastVisitTableNumber = last.tableNumber;
+        g.lastVisitGuestCount = last.numberOfGuests;
+      } else {
+        g.lastVisitTableNumber = null;
+        g.lastVisitGuestCount = 0;
+      }
+      return g;
+    });
+
+    res.json(processedGuests);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

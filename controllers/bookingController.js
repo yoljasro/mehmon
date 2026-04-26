@@ -1,6 +1,7 @@
 const Booking = require('../models/Booking');
 const Table = require('../models/Table');
 const Guest = require('../models/Guest');
+const { createLog } = require('./logController');
 
 // @desc    Get all bookings
 // @route   GET /api/bookings
@@ -18,7 +19,17 @@ exports.getBookings = async (req, res) => {
 // @route   POST /api/bookings
 // @access  Private
 exports.createBooking = async (req, res) => {
-  const { guestName, phone, tableId, date, timeSlot, numberOfGuests, notes } = req.body;
+  const { 
+    guestName, 
+    phone, 
+    tableId, 
+    date, 
+    timeSlot, 
+    endTime, 
+    bookingType, 
+    numberOfGuests, 
+    notes 
+  } = req.body;
 
   try {
     // 1. Check if table exists
@@ -41,9 +52,16 @@ exports.createBooking = async (req, res) => {
 
     // 3. Create or update Guest
     let guest = await Guest.findOne({ phone });
+    const visitData = {
+      date: date ? new Date(date) : new Date(),
+      tableNumber: table.number,
+      numberOfGuests: numberOfGuests || 0
+    };
+
     if (guest) {
       guest.visitCount += 1;
       guest.lastVisit = Date.now();
+      guest.visits.push(visitData);
       if (notes) guest.notes = notes;
       await guest.save();
     } else {
@@ -51,6 +69,7 @@ exports.createBooking = async (req, res) => {
         name: guestName,
         phone,
         notes,
+        visits: [visitData],
       });
     }
 
@@ -61,16 +80,19 @@ exports.createBooking = async (req, res) => {
       tableId,
       date,
       timeSlot,
+      endTime,
+      bookingType,
       numberOfGuests,
       notes,
     });
 
-    // 5. Update table status if booking is for today (simplified)
-    // In a real app, this would be managed by a more complex scheduler
-    // table.status = 'booked';
-    // await table.save();
+    const populatedBooking = await Booking.findById(booking._id).populate('tableId', 'number capacity');
 
-    res.status(201).json(booking);
+    // Create activity log
+    // We don't have user.id in creating booking? Actually yes, it's Private route
+    await createLog(req.user.id, 'Yangi band qilish', `${guestName} uchun ${table.number}-stol band qilindi`, req.user.name);
+
+    res.status(201).json(populatedBooking);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -85,9 +107,18 @@ exports.updateBooking = async (req, res) => {
 
     if (booking) {
       booking.status = req.body.status || booking.status;
-      // Other fields could be updated here too
+      booking.timeSlot = req.body.timeSlot || booking.timeSlot;
+      booking.endTime = req.body.endTime || booking.endTime;
+      booking.bookingType = req.body.bookingType || booking.bookingType;
+      booking.numberOfGuests = req.body.numberOfGuests || booking.numberOfGuests;
+      booking.notes = req.body.notes || booking.notes;
       
-      const updatedBooking = await booking.save();
+      await booking.save();
+      const updatedBooking = await Booking.findById(booking._id).populate('tableId', 'number capacity');
+      
+      // Create activity log
+      await createLog(req.user.id, 'Band qilish yangilandi', `${updatedBooking.guestName} uchun buyurtma holati: ${updatedBooking.status}`, req.user.name);
+
       res.json(updatedBooking);
     } else {
       res.status(404).json({ message: 'Booking not found' });

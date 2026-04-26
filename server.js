@@ -24,7 +24,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'https://mainstream.ceo',
+        url: 'https://kardise.engineering',
         description: 'Production server (HTTPS)'
       },
       {
@@ -66,6 +66,10 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/tables', require('./routes/tableRoutes'));
 app.use('/api/bookings', require('./routes/bookingRoutes'));
 app.use('/api/guests', require('./routes/guestRoutes'));
+app.use('/api/analytics', require('./routes/analyticsRoutes'));
+app.use('/api/activity-log', require('./routes/logRoutes'));
+app.use('/api/shifts', require('./routes/shiftRoutes'));
+app.use('/api/settings', require('./routes/settingsRoutes'));
 
 app.get('/', (req, res) => {
   res.send('Mehmon Business API is running...');

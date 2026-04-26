@@ -1,4 +1,5 @@
 const Table = require('../models/Table');
+const { createLog } = require('./logController');
 
 // @desc    Get all tables
 // @route   GET /api/tables
@@ -30,6 +31,9 @@ exports.createTable = async (req, res) => {
       capacity,
       location,
     });
+
+    // Create activity log
+    await createLog(req.user.id, 'Yangi stol', `${number}-raqamli stol qo'shildi`, req.user.name);
 
     res.status(201).json(table);
   } catch (error) {

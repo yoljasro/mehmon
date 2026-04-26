@@ -9,7 +9,9 @@ const BookingSchema = new mongoose.Schema({
     required: true 
   },
   date: { type: Date, required: true },
-  timeSlot: { type: String, required: true }, // e.g., '17:00'
+  timeSlot: { type: String, required: true }, // Start time, e.g., '17:00'
+  endTime: { type: String }, // End time, e.g., '19:00'
+  bookingType: { type: String, default: 'Standard' }, // e.g., 'Banket'
   numberOfGuests: { type: Number, required: true },
   status: { 
     type: String, 
