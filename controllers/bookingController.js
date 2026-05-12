@@ -90,7 +90,7 @@ exports.createBooking = async (req, res) => {
 
     // Create activity log
     // We don't have user.id in creating booking? Actually yes, it's Private route
-    await createLog(req.user.id, 'Yangi band qilish', `${guestName} uchun ${table.number}-stol band qilindi`, req.user.name);
+    await createLog(req.user.id, 'Yangi band qilish', `${guestName} uchun ${table.number}-stol band qilindi`, req.user.name, 'booking_created');
 
     res.status(201).json(populatedBooking);
   } catch (error) {
@@ -117,7 +117,8 @@ exports.updateBooking = async (req, res) => {
       const updatedBooking = await Booking.findById(booking._id).populate('tableId', 'number capacity');
       
       // Create activity log
-      await createLog(req.user.id, 'Band qilish yangilandi', `${updatedBooking.guestName} uchun buyurtma holati: ${updatedBooking.status}`, req.user.name);
+      const logType = updatedBooking.status === 'completed' ? 'check_in' : 'booking_updated';
+      await createLog(req.user.id, 'Band qilish yangilandi', `${updatedBooking.guestName} uchun buyurtma holati: ${updatedBooking.status}`, req.user.name, logType);
 
       res.json(updatedBooking);
     } else {
@@ -136,6 +137,7 @@ exports.deleteBooking = async (req, res) => {
     const booking = await Booking.findById(req.params.id);
 
     if (booking) {
+      await createLog(req.user.id, 'Band qilish bekor qilindi', `${booking.guestName} uchun band qilish o'chirildi`, req.user.name, 'booking_cancelled');
       await booking.deleteOne();
       res.json({ message: 'Booking removed' });
     } else {

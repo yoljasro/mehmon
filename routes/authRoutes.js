@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerUser, loginUser, getProfile, updateProfile, logoutUser } = require('../controllers/authController');
+const { registerUser, loginUser, getProfile, updateProfile, logoutUser, refreshToken } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 const router = express.Router();
 
@@ -65,6 +65,48 @@ const router = express.Router();
  *         description: Bad request
  */
 router.post('/register', registerUser);
+
+/**
+ * @swagger
+ * /api/auth/refresh:
+ *   post:
+ *     summary: Refresh access token
+ *     description: |
+ *       Exchange a valid refresh token for a new access + refresh token pair.
+ *       **Token expiry:** Access token = 15 minutes, Refresh token = 30 days.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *     responses:
+ *       200:
+ *         description: New token pair issued
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *                 refreshToken:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *       400:
+ *         description: Refresh token missing
+ *       401:
+ *         description: Invalid or expired refresh token
+ */
+router.post('/refresh', refreshToken);
 
 /**
  * @swagger
@@ -150,14 +192,20 @@ router.post('/login', loginUser);
  *             properties:
  *               imageUrl:
  *                 type: string
+ *                 description: "Use POST /api/upload to get this URL"
+ *                 example: "https://kardise.engineering/uploads/photo.jpg"
  *               institutionType:
  *                 type: string
+ *                 enum: [cafe, restaurant, bar, fast_food, bakery, club, other]
+ *                 example: "restaurant"
  *               address:
  *                 type: string
  *               openingTime:
  *                 type: string
+ *                 example: "09:00"
  *               closingTime:
  *                 type: string
+ *                 example: "23:00"
  *               cafeName:
  *                 type: string
  *               name:

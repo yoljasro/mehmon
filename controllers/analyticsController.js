@@ -43,7 +43,7 @@ exports.getReports = async (req, res) => {
       filter.date = { $gte: startDate, $lte: endDate };
     }
 
-    const bookings = await Booking.find(filter);
+    const bookings = await Booking.find(filter).populate('tableId', 'number capacity');
     const totalBookings = bookings.length;
     const completed = bookings.filter(b => b.status === 'completed').length;
     const cancelled = bookings.filter(b => b.status === 'cancelled').length;

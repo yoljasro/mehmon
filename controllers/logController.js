@@ -15,10 +15,12 @@ exports.getActivityLogs = async (req, res) => {
 };
 
 // Helper function to create a log
-exports.createLog = async (restaurantId, action, details, performedBy) => {
+// type: 'booking_created' | 'booking_updated' | 'booking_cancelled' | 'check_in' | 'other'
+exports.createLog = async (restaurantId, action, details, performedBy, type = 'other') => {
   try {
     await ActivityLog.create({
       restaurantId,
+      type,
       action,
       details,
       performedBy,
