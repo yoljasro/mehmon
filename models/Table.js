@@ -8,7 +8,10 @@ const TableSchema = new mongoose.Schema({
     enum: ['available', 'occupied', 'booked'], 
     default: 'available' 
   },
-  location: { type: String }, // e.g., 'window', 'center', 'outdoor'
+  location: { type: String }, // General description
+  zone: { type: String }, // e.g., 'Terrassa', 'Main Hall'
+  x: { type: Number, default: 0 },
+  y: { type: Number, default: 0 },
 });
 
 module.exports = mongoose.model('Table', TableSchema);

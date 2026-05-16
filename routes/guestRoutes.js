@@ -5,6 +5,7 @@ const {
   createGuest,
   updateGuest,
   deleteGuest,
+  getGuestsInHall,
 } = require('../controllers/guestController');
 const { protect } = require('../middleware/auth');
 const router = express.Router();
@@ -56,6 +57,7 @@ router.use(protect);
  *       201:
  *         description: Guest created
  */
+router.get('/in-hall', getGuestsInHall);
 router.route('/').get(getGuests).post(createGuest);
 
 /**

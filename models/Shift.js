@@ -7,6 +7,7 @@ const ShiftSchema = new mongoose.Schema({
   endTime: { type: String, required: true },
   date: { type: String, required: true },
   notes: { type: String },
+  assignedTables: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Table' }],
   createdAt: { type: Date, default: Date.now },
 });
 

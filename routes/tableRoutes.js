@@ -4,6 +4,7 @@ const {
   createTable,
   updateTable,
   deleteTable,
+  getTableDetails,
 } = require('../controllers/tableController');
 const { protect } = require('../middleware/auth');
 const router = express.Router();
@@ -100,5 +101,6 @@ router.route('/').get(getTables).post(createTable);
  *         description: Table deleted
  */
 router.route('/:id').put(updateTable).delete(deleteTable);
+router.get('/:id/details', getTableDetails);
 
 module.exports = router;

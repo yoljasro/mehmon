@@ -82,6 +82,7 @@ exports.registerUser = async (req, res) => {
           phone: user.phone,
           cafeName: user.cafeName,
           role: user.role,
+          isSetupCompleted: user.isSetupCompleted,
         },
       });
     } else {
@@ -114,6 +115,7 @@ exports.loginUser = async (req, res) => {
           phone: user.phone,
           cafeName: user.cafeName,
           role: user.role,
+          isSetupCompleted: user.isSetupCompleted,
         },
       });
     } else {
@@ -152,6 +154,8 @@ exports.updateProfile = async (req, res) => {
       user.address = req.body.address || user.address;
       user.openingTime = req.body.openingTime || user.openingTime;
       user.closingTime = req.body.closingTime || user.closingTime;
+      user.zones = req.body.zones || user.zones;
+      user.isSetupCompleted = req.body.isSetupCompleted !== undefined ? req.body.isSetupCompleted : user.isSetupCompleted;
       user.cafeName = req.body.cafeName || user.cafeName;
       user.name = req.body.name || user.name;
       user.phone = req.body.phone || user.phone; // Added phone update
@@ -171,6 +175,8 @@ exports.updateProfile = async (req, res) => {
         address: updatedUser.address,
         openingTime: updatedUser.openingTime,
         closingTime: updatedUser.closingTime,
+        zones: updatedUser.zones,
+        isSetupCompleted: updatedUser.isSetupCompleted,
         role: updatedUser.role,
       });
     } else {

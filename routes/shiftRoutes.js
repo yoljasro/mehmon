@@ -1,5 +1,5 @@
 const express = require('express');
-const { getShifts, createShift, deleteShift } = require('../controllers/shiftController');
+const { getShifts, createShift, updateShift, deleteShift } = require('../controllers/shiftController');
 const { protect } = require('../middleware/auth');
 const router = express.Router();
 
@@ -15,37 +15,7 @@ router.use(protect);
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of shifts (newest first)
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                     example: "65f1a2b3c4d5e6f7a8b9c0d1"
- *                   restaurantId:
- *                     type: string
- *                     description: Always returned — filtered to current restaurant
- *                     example: "65f1a2b3c4d5e6f7a8b9c0d1"
- *                   staffName:
- *                     type: string
- *                     example: "Dilnoza Yusupova"
- *                   startTime:
- *                     type: string
- *                     example: "09:00"
- *                   endTime:
- *                     type: string
- *                     example: "17:00"
- *                   date:
- *                     type: string
- *                     example: "2026-05-12"
- *                   notes:
- *                     type: string
- *                     nullable: true
- *                     example: "Kechga qolishi mumkin"
+ *         description: List of shifts
  *   post:
  *     summary: Create a new shift
  *     tags: [Shifts]
@@ -65,20 +35,18 @@ router.use(protect);
  *             properties:
  *               staffName:
  *                 type: string
- *                 example: "Dilnoza Yusupova"
  *               startTime:
  *                 type: string
- *                 example: "09:00"
  *               endTime:
  *                 type: string
- *                 example: "17:00"
  *               date:
  *                 type: string
- *                 example: "2026-05-12"
  *               notes:
  *                 type: string
- *                 nullable: true
- *                 example: "Kechga qolishi mumkin"
+ *               assignedTables:
+ *                 type: array
+ *                 items:
+ *                   type: string
  *     responses:
  *       201:
  *         description: Shift created
@@ -88,6 +56,41 @@ router.route('/').get(getShifts).post(createShift);
 /**
  * @swagger
  * /api/shifts/{id}:
+ *   put:
+ *     summary: Update a shift
+ *     tags: [Shifts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               staffName:
+ *                 type: string
+ *               startTime:
+ *                 type: string
+ *               endTime:
+ *                 type: string
+ *               date:
+ *                 type: string
+ *               notes:
+ *                 type: string
+ *               assignedTables:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Shift updated
  *   delete:
  *     summary: Delete a shift
  *     tags: [Shifts]
@@ -102,17 +105,7 @@ router.route('/').get(getShifts).post(createShift);
  *     responses:
  *       200:
  *         description: Shift deleted
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Shift removed"
- *       404:
- *         description: Shift not found
  */
-router.delete('/:id', deleteShift);
+router.route('/:id').put(updateShift).delete(deleteShift);
 
 module.exports = router;

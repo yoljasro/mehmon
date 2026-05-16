@@ -7,17 +7,29 @@ const Table = require('../models/Table');
 // @access  Private
 exports.getSummary = async (req, res) => {
   try {
-    const todayStr = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
 
-    const totalBookings = await Booking.countDocuments({ date: todayStr });
-    const confirmedBookings = await Booking.countDocuments({ date: todayStr, status: 'confirmed' });
-    const pendingBookings = await Booking.countDocuments({ date: todayStr, status: 'pending' });
+    const totalBookings = await Booking.countDocuments({ date: { $gte: today, $lt: tomorrow } });
+    const confirmedBookings = await Booking.countDocuments({ date: { $gte: today, $lt: tomorrow }, status: 'confirmed' });
+    const pendingBookings = await Booking.countDocuments({ date: { $gte: today, $lt: tomorrow }, status: 'pending' });
     
     const totalGuests = await Guest.countDocuments();
     const totalTables = await Table.countDocuments();
     
-    // Basic occupancy calculation
-    const occupancyRate = totalTables > 0 ? (confirmedBookings / totalTables) * 100 : 0;
+    // Dynamic occupancy: how many tables are currently occupied based on bookings
+    const currentTimeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    const activeBookings = await Booking.find({
+      date: { $gte: today, $lt: tomorrow },
+      status: { $in: ['confirmed', 'completed'] }
+    });
+
+    const occupiedTablesCount = activeBookings.filter(b => 
+      currentTimeStr >= b.timeSlot && (b.endTime ? currentTimeStr <= b.endTime : true)
+    ).length;
+
+    const occupancyRate = totalTables > 0 ? (occupiedTablesCount / totalTables) * 100 : 0;
 
     res.json({
       totalBookings,

@@ -13,6 +13,8 @@ const UserSchema = new mongoose.Schema({
   address: { type: String },
   openingTime: { type: String },
   closingTime: { type: String },
+  zones: [{ type: String }], // e.g., ['Terrassa', 'Main Hall', 'VIP']
+  isSetupCompleted: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });
 

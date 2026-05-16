@@ -1,4 +1,5 @@
 const Guest = require('../models/Guest');
+const Booking = require('../models/Booking');
 
 // @desc    Get all guests
 // @route   GET /api/guests
@@ -107,6 +108,53 @@ exports.deleteGuest = async (req, res) => {
     } else {
       res.status(404).json({ message: 'Guest not found' });
     }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// @desc    Get guests currently in hall
+// @route   GET /api/guests/in-hall
+// @access  Private
+exports.getGuestsInHall = async (req, res) => {
+  try {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const currentTimeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+    // 1. Find active bookings for now
+    const activeBookings = await Booking.find({
+      date: { $gte: today, $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000) },
+      status: { $in: ['confirmed', 'completed'] }
+    });
+
+    const currentBookings = activeBookings.filter(b => 
+      currentTimeStr >= b.timeSlot && (b.endTime ? currentTimeStr <= b.endTime : true)
+    );
+
+    if (currentBookings.length === 0) {
+      return res.json([]);
+    }
+
+    // 2. Get phones of guests in hall
+    const phones = currentBookings.map(b => b.phone);
+
+    // 3. Find guests by phone
+    const guests = await Guest.find({ phone: { $in: phones } });
+
+    // 4. Map guests to include their current table info
+    const processedGuests = guests.map(guest => {
+      const g = guest.toObject();
+      const booking = currentBookings.find(b => b.phone === guest.phone);
+      if (booking) {
+        g.currentTableId = booking.tableId;
+        g.bookingId = booking._id;
+        g.bookingTimeSlot = booking.timeSlot;
+        g.bookingEndTime = booking.endTime;
+      }
+      return g;
+    });
+
+    res.json(processedGuests);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
