@@ -19,13 +19,22 @@ exports.getShifts = async (req, res) => {
 // @access  Private
 exports.createShift = async (req, res) => {
   const { staffName, startTime, endTime, date, notes, assignedTables } = req.body;
+  
+  let formattedDate = date;
+  if (formattedDate && formattedDate.includes('.')) {
+    const parts = formattedDate.split('.');
+    if (parts.length === 3 && parts[0].length <= 2) {
+      formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+  }
+
   try {
     const shift = await Shift.create({
       restaurantId: req.user.id,
       staffName,
       startTime,
       endTime,
-      date,
+      date: formattedDate,
       notes,
       assignedTables,
     });
@@ -46,7 +55,16 @@ exports.updateShift = async (req, res) => {
       shift.staffName = req.body.staffName || shift.staffName;
       shift.startTime = req.body.startTime || shift.startTime;
       shift.endTime = req.body.endTime || shift.endTime;
-      shift.date = req.body.date || shift.date;
+      
+      let newDate = req.body.date || shift.date;
+      if (newDate && newDate.includes('.')) {
+        const parts = newDate.split('.');
+        if (parts.length === 3 && parts[0].length <= 2) {
+          newDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+      }
+      shift.date = newDate;
+      
       shift.notes = req.body.notes || shift.notes;
       shift.assignedTables = req.body.assignedTables || shift.assignedTables;
 

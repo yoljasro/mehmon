@@ -150,10 +150,22 @@ exports.getTableDetails = async (req, res) => {
       b.timeSlot > currentTimeStr
     );
 
+    const formatBooking = (b) => ({
+      guestName: b.guestName,
+      timeSlot: b.timeSlot,
+      endTime: b.endTime || null,
+      numberOfGuests: b.numberOfGuests,
+      notes: b.notes || null,
+    });
+
     res.json({
       table,
-      currentBooking: currentBooking || null,
-      upcomingBookings
+      currentBooking: currentBooking ? formatBooking(currentBooking) : null,
+      upcomingBookings: upcomingBookings.map(b => ({
+        guestName: b.guestName,
+        timeSlot: b.timeSlot,
+        numberOfGuests: b.numberOfGuests
+      }))
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

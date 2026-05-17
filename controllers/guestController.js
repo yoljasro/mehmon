@@ -141,9 +141,21 @@ exports.getGuestsInHall = async (req, res) => {
     // 3. Find guests by phone
     const guests = await Guest.find({ phone: { $in: phones } });
 
-    // 4. Map guests to include their current table info
+    // 4. Map guests to include their current table info and last visit info
     const processedGuests = guests.map(guest => {
       const g = guest.toObject();
+      
+      // Add last visit info
+      if (g.visits && g.visits.length > 0) {
+        const last = g.visits[g.visits.length - 1];
+        g.lastVisitTableNumber = last.tableNumber;
+        g.lastVisitGuestCount = last.numberOfGuests;
+      } else {
+        g.lastVisitTableNumber = null;
+        g.lastVisitGuestCount = 0;
+      }
+
+      // Add current booking info
       const booking = currentBookings.find(b => b.phone === guest.phone);
       if (booking) {
         g.currentTableId = booking.tableId;

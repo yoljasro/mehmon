@@ -31,6 +31,13 @@ exports.createBooking = async (req, res) => {
     notes 
   } = req.body;
 
+  let calculatedEndTime = endTime;
+  if (!calculatedEndTime && (!bookingType || bookingType === 'Standard') && timeSlot) {
+    const [hours, minutes] = timeSlot.split(':').map(Number);
+    const endHours = (hours + 2) % 24;
+    calculatedEndTime = `${endHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  }
+
   try {
     // 1. Check if table exists
     const table = await Table.findById(tableId);
@@ -80,7 +87,7 @@ exports.createBooking = async (req, res) => {
       tableId,
       date,
       timeSlot,
-      endTime,
+      endTime: calculatedEndTime,
       bookingType,
       numberOfGuests,
       notes,
@@ -108,10 +115,24 @@ exports.updateBooking = async (req, res) => {
     if (booking) {
       booking.status = req.body.status || booking.status;
       booking.timeSlot = req.body.timeSlot || booking.timeSlot;
-      booking.endTime = req.body.endTime || booking.endTime;
       booking.bookingType = req.body.bookingType || booking.bookingType;
+      
+      let newEndTime = req.body.endTime || booking.endTime;
+      if (req.body.timeSlot && !req.body.endTime && booking.bookingType === 'Standard') {
+        // If timeSlot is updated but endTime is not, recalculate it for Standard bookings
+        const [hours, minutes] = req.body.timeSlot.split(':').map(Number);
+        const endHours = (hours + 2) % 24;
+        newEndTime = `${endHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      } else if (!newEndTime && booking.bookingType === 'Standard' && booking.timeSlot) {
+        // Fallback if there was never an endTime
+        const [hours, minutes] = booking.timeSlot.split(':').map(Number);
+        const endHours = (hours + 2) % 24;
+        newEndTime = `${endHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      }
+      
+      booking.endTime = newEndTime;
       booking.numberOfGuests = req.body.numberOfGuests || booking.numberOfGuests;
-      booking.notes = req.body.notes || booking.notes;
+      booking.notes = req.body.notes !== undefined ? req.body.notes : booking.notes;
       
       await booking.save();
       const updatedBooking = await Booking.findById(booking._id).populate('tableId', 'number capacity');
